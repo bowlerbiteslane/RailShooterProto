@@ -4,12 +4,14 @@ using System.Collections;
 public class RailMover : MonoBehaviour {
 
     public Transform rider;
+    public int startNode = 1;
     public float railSpeed = 5f;
     public float rotationSmoothing = .5f;
+    public bool movingOnStart = true;
     public bool loop = true;
 
     private Transform[] railNodes;
-    private int nodeIter = 1;                                   // initialize as one so that we skip over the parent transform at (0,0,0)
+    private int nodeIter;                                   
     private bool moving = false;
 
 	// Use this for initialization
@@ -25,13 +27,16 @@ public class RailMover : MonoBehaviour {
             Debug.Log("No railnodes nested under the railmover. Disabling Script.");
             this.enabled = false;
         }
-	}
+        nodeIter = Mathf.Clamp(startNode, 1, railNodes.Length - 1);             // initialize as one so that we skip over the parent transform at (0,0,0), ensures that value does not exceed array length  
+        moving = movingOnStart;
+    }
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            moving = !moving;
+            //moving = !moving;
+            StartMoving();
         }
         if (moving)
         {
@@ -61,6 +66,10 @@ public class RailMover : MonoBehaviour {
         }
 	}
 
+    public void StartMoving()
+    {
+        moving = true;
+    }
 
     void OnDrawGizmos()
     {
