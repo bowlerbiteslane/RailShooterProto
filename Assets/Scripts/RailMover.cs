@@ -3,16 +3,18 @@ using System.Collections;
 
 public class RailMover : MonoBehaviour {
 
+    public GameObject railNodeGroup;    // empty gameObject with other empty game objects attached -- uses the transform from each
     public Transform rider;
     public int startNode = 1;
     public float railSpeed = 5f;
     public float rotationSmoothing = .5f;
     public bool movingOnStart = true;
-    public bool loop = true;
 
+    
     private Transform[] railNodes;
     private int nodeIter;                                   
     private bool moving = false;
+    private bool loop;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +23,17 @@ public class RailMover : MonoBehaviour {
             Debug.Log("No player attached to RailMover Script. Disabling Script.");
             this.enabled = false;
         }
-        railNodes = this.GetComponentsInChildren<Transform>(); // will return parent transform at railNodes[0]
+        if (railNodeGroup == null)
+        {
+            Debug.Log("No railNodeGroup attached to RailMover Script. Disabling Script.");
+            this.enabled = false;
+        }
+        if (railNodeGroup.GetComponent<RailNodeGroupDebug>() != null)
+            loop = railNodeGroup.GetComponent<RailNodeGroupDebug>().loop;
+        else
+            loop = false;
+        
+        railNodes = railNodeGroup.GetComponentsInChildren<Transform>(); // will return parent transform at railNodes[0]
         if (railNodes.Length == 0)
         {
             Debug.Log("No railnodes nested under the railmover. Disabling Script.");
@@ -30,7 +42,8 @@ public class RailMover : MonoBehaviour {
         nodeIter = Mathf.Clamp(startNode, 1, railNodes.Length - 1);             // initialize as one so that we skip over the parent transform at (0,0,0), ensures that value does not exceed array length  
         moving = movingOnStart;
     }
-	
+
+
 	// Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -69,18 +82,5 @@ public class RailMover : MonoBehaviour {
     public void StartMoving()
     {
         moving = true;
-    }
-
-    void OnDrawGizmos()
-    {
-        railNodes = this.GetComponentsInChildren<Transform>(); // will return parent transform at railNodes[0]
-        for (int i = 1; i < railNodes.Length; i++)
-        {
-            if (i < railNodes.Length - 1)
-                Debug.DrawLine(railNodes[i].position, railNodes[i + 1].position, Color.red);
-            else if (loop)
-                Debug.DrawLine(railNodes[i].position, railNodes[1].position, Color.red);
-        }
-        
-    }
+    }   
 }

@@ -46,8 +46,7 @@ MonoBehaviour:
   acceptKeyboard: 1
   cursorSize: 32
   customCursor: {fileID: 0}
-  startButtonTex: {fileID: 2800000, guid: 23fdd375cbe9a3d499ff735c13083136, type: 3}
-  railmover: {fileID: 0}
+  exitButtonTex: {fileID: 2800000, guid: b96ae4d1a747d1e4cbe334b39e3379a8, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

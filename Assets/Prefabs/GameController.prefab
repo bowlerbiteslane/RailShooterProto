@@ -23,7 +23,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 186980}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1594, y: 9, z: 1657}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -40,7 +40,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hideShowMenuKey: 27
-  playerMenu: {fileID: 0}
+  debugOculusOverride: 1
+  ovrManager: {fileID: 0}
+  startCamPrefab: {fileID: 111322, guid: 6ad346ca49cc8c2459ce3a7134e4f71b, type: 2}
+  playerPrefab: {fileID: 122052, guid: 5a9c36038ca22524ea5a658bdb91beb5, type: 2}
+  railMoverPrefab: {fileID: 138048, guid: 8a95a122c7bb3f5489fd57363bb17c73, type: 2}
+  railMoverGroupPrefab: {fileID: 0}
+  mainMenuPrefab: {fileID: 184302, guid: fe9d49c5b64707548b8b9e0a1c533f20, type: 2}
+  inGameMenuPrefab: {fileID: 184122, guid: a5cfc24ec679ddf4b8538ceaa6dfe3c7, type: 2}
+  startCamSpawn: {fileID: 0}
+  playerSpawn: {fileID: 0}
+  railMoverSpawn: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

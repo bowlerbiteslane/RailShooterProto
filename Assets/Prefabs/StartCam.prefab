@@ -56,7 +56,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 411328}
   - 114: {fileID: 11411328}
-  - 114: {fileID: 11411326}
   - 114: {fileID: 11411330}
   m_Layer: 0
   m_Name: OVRCameraRig
@@ -81,17 +80,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &111332
+--- !u!1 &117318
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
   m_Component:
-  - 4: {fileID: 411332}
-  - 114: {fileID: 11411332}
+  - 4: {fileID: 417318}
+  - 20: {fileID: 2017318}
+  - 124: {fileID: 12417318}
+  - 92: {fileID: 9217318}
+  - 81: {fileID: 8117318}
   m_Layer: 0
-  m_Name: MainMenu
+  m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,12 +105,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111322}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: 1287.30005, y: 42.9000015, z: 1183.30005}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 411328}
-  - {fileID: 411332}
+  - {fileID: 417318}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!4 &411324
@@ -162,12 +164,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 411328}
   m_RootOrder: 0
---- !u!4 &411332
+--- !u!4 &417318
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111332}
+  m_GameObject: {fileID: 117318}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -238,6 +240,38 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
+--- !u!20 &2017318
+Camera:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117318}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: .300000012
+  far clip plane: 10000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967039
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_HDR: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: .0219999999
 --- !u!81 &8111332
 AudioListener:
   m_ObjectHideFlags: 1
@@ -245,26 +279,20 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111324}
   m_Enabled: 1
---- !u!114 &11411326
-MonoBehaviour:
+--- !u!81 &8117318
+AudioListener:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111328}
+  m_GameObject: {fileID: 117318}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e933e81d3c20c74ea6fdc708a67e3a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nativeTextureScale: 1
-  virtualTextureScale: 1
-  usePositionTracking: 1
-  eyeTextureFormat: 7
-  eyeTextureDepth: 24
-  timeWarp: 1
-  freezeTimeWarp: 0
-  resetTrackerOnLoad: 1
-  monoscopic: 0
+--- !u!92 &9217318
+Behaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 117318}
+  m_Enabled: 1
 --- !u!114 &11411328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -288,26 +316,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HMDResetKey: 114
---- !u!114 &11411332
-MonoBehaviour:
+--- !u!124 &12417318
+Behaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 111332}
+  m_GameObject: {fileID: 117318}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87d8964bb5eedfb48affe1895937a062, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guiPosition: {x: 0, y: 0, z: 3}
-  guiSize: 1
-  useCurvedSurface: 0
-  acceptMouse: 1
-  acceptKeyboard: 1
-  cursorSize: 32
-  customCursor: {fileID: 0}
-  startButtonTex: {fileID: 2800000, guid: 23fdd375cbe9a3d499ff735c13083136, type: 3}
-  recenterButtonTex: {fileID: 2800000, guid: d1d22c775f51d72478265e827f3cc159, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -6,8 +6,11 @@ public class MainMenu : VRGUI {
     public Texture startButtonTex;
     public Texture recenterButtonTex;
 
-    private bool startButtonClicked = false;
-    private bool recenterButtonClicked = false;
+    public delegate void OnStartClicked();
+    public static event OnStartClicked OnStartButtonClicked;
+
+    public delegate void OnRecenterClicked();
+    public static event OnRecenterClicked OnRecenterButtonClicked;
 
 
     void Start()
@@ -23,20 +26,6 @@ public class MainMenu : VRGUI {
             this.enabled = false;
         }
     }
-
-    void Update()
-    {
-        if (startButtonClicked)
-        {
-            //Application.LoadLevel(1);
-            startButtonClicked = false;
-        }
-        if (recenterButtonClicked)
-        {
-            OVRManager.display.RecenterPose();
-            recenterButtonClicked = false;
-        }
-    }
   
 
     public override void OnVRGUI()
@@ -46,13 +35,13 @@ public class MainMenu : VRGUI {
         GUILayout.Space(Screen.height * .25f);
         if (GUILayout.Button(startButtonTex, buttonHeight))
         {
-            Debug.Log("Start button clicked.");
-            startButtonClicked = true;
+            if (OnStartButtonClicked != null)
+                OnStartButtonClicked();
         }
         if (GUILayout.Button(recenterButtonTex, buttonHeight))
         {
-            Debug.Log("Recenter button clicked.");
-            recenterButtonClicked = true;
+            if (OnRecenterButtonClicked != null)
+                OnRecenterButtonClicked();
         }
         GUILayout.EndArea();
     }

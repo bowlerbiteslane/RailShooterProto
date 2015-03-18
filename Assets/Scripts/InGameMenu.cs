@@ -3,46 +3,30 @@ using System.Collections;
 
 public class InGameMenu : VRGUI {
 
-    public Texture startButtonTex;
-    public GameObject railmover;
+    public delegate void OnExitClicked();
+    public static event OnExitClicked OnExitButtonClicked;
 
-    private bool startButtonClicked = false;
-
-
+    public Texture exitButtonTex;
     void Start()
     {
-        if (startButtonTex == null)
+        if (exitButtonTex == null)
         {
             Debug.Log("There is not start button texure associated with the Menu. Disabling Script.");
             this.enabled = false;
-        }
-        if (railmover == null)
-        {
-            Debug.Log("There is no railmover associated with the Menu. Disabling Script.");
-            this.enabled = false;
-        }
-    }
-
-    void Update()
-    {
-        if (startButtonClicked)
-        {
-            railmover.GetComponent<RailMover>().StartMoving();
-            startButtonClicked = false;
-            gameObject.SetActive(false);
         }
     }
   
 
     public override void OnVRGUI()
     {
-        GUILayoutOption buttonHeight = GUILayout.Height(500f);
+        GUILayoutOption buttonHeight = GUILayout.Height(Screen.height*.25f);
         GUILayout.BeginArea(new Rect(0f, 0f, Screen.width, Screen.height));
-        GUILayout.Space(200f);
-        if (GUILayout.Button(startButtonTex, buttonHeight))
+        GUILayout.Space(Screen.height*.25f);
+        if (GUILayout.Button(exitButtonTex, buttonHeight))
         {
+            if (OnExitButtonClicked != null)
+                OnExitButtonClicked();
             Debug.Log("Start button clicked.");
-            startButtonClicked = true;
         }
         GUILayout.EndArea();
     }
