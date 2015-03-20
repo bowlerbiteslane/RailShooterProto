@@ -4,13 +4,12 @@ using System.Collections;
 public class GameController : MonoBehaviour {
     
     public KeyCode hideShowMenuKey = KeyCode.Escape;
-    public bool debugOculusOverride = false;
     // scene objects
-    public GameObject ovrManager;
 
     // reference prefabs
-    public GameObject startCamPrefab;
     public GameObject playerPrefab;
+    public GameObject customOculusCamPrefab;
+    public GameObject startCamPrefab;
     public GameObject railMoverPrefab;
     public GameObject railNodeGroupPrefab;
     public GameObject mainMenuPrefab;
@@ -20,24 +19,22 @@ public class GameController : MonoBehaviour {
     public Transform playerSpawn;
     public Transform railMoverSpawn;
     // manage instances of objects internally
+    private GameObject customOculusCam;
     private GameObject player;
+    private GameObject startCam;
     private GameObject railMover;
     private GameObject railNodeGroup;
     private GameObject currentMenu;
+    private GameObject mainMenu;
+    private GameObject inGameMenu;
 
-    private bool usingOculus = false;
-    private bool showMenu = false;
+    private bool showMenu = true;
 
 
 	// Use this for initialization
-	void Start () {
+	void OnEnable () {
         // check for prefab prerequisites
-        if (ovrManager == null)
-        {
-            Debug.Log("No ovrManager in the GameContoller. Game may not work as intended. Disabling Script.");
-            this.enabled = false;
-        }
-        if (startCamPrefab == null)
+        if (customOculusCamPrefab == null)
         {
             Debug.Log("No start cam in the GameContoller. Game may not work as intended. Disabling Script.");
             this.enabled = false;
@@ -45,6 +42,11 @@ public class GameController : MonoBehaviour {
         if (playerPrefab == null)
         {
             Debug.Log("No player prefab added to Game Controller. Game may not work as intended. Disabling Script.");
+            this.enabled = false;
+        }
+        if (startCamPrefab == null)
+        {
+            Debug.Log("No startcam prefab in the GameContoller. Game may not work as intended. Disabling Script.");
             this.enabled = false;
         }
         if (railMoverPrefab == null)
@@ -83,90 +85,80 @@ public class GameController : MonoBehaviour {
             Debug.Log("No railmover prefab in the GameContoller. Game may not work as intended. Disabling Script.");
             this.enabled = false;
         }
-        // perform actions on start
-        DetectUsingOculus();
+        // instantiate gameobjects in start screen
+        startCam = Instantiate(startCamPrefab, startCamSpawn.position, startCamSpawn.rotation) as GameObject;
+        customOculusCam = Instantiate(customOculusCamPrefab, startCamSpawn.position, startCamSpawn.rotation) as GameObject;
+        mainMenu = Instantiate(mainMenuPrefab, startCam.transform.position, startCam.transform.rotation) as GameObject;
+        railMover = Instantiate(railMoverPrefab, railMoverSpawn.position, railMoverSpawn.rotation) as GameObject;
+        railNodeGroup = Instantiate(railNodeGroupPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        railMover.GetComponent<RailMover>().railNodeGroup = railNodeGroup;
+        railMover.GetComponent<RailMover>().rider = startCam.transform;
+        // instantiate objects that aren't yet being used
+        inGameMenu = Instantiate(inGameMenuPrefab, playerSpawn.position, playerSpawn.rotation) as GameObject;
+        player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation) as GameObject;
+
+        MainMenu.OnStartButtonClicked += StartGame;
+        MainMenu.OnRecenterButtonClicked += customOculusCam.GetComponentInChildren<CameraManager>().RecenterOculusPos;
+        InGameMenu.OnExitButtonClicked += EndGame;
+        
+    }
+
+    // subscribe to custom menu events
+    void Start()
+    {
+        // disable objects that aren't yet being used
+        player.SetActive(false);
+        inGameMenu.SetActive(false);
+
         Screen.showCursor = false;
         LoadStartScreen();
     }
 
-    // subscribe to custom menu events
-    void OnEnable()
+
+    void Update()
     {
-        MainMenu.OnStartButtonClicked += StartGame;
-        MainMenu.OnRecenterButtonClicked += RecenterOculus;
-        InGameMenu.OnExitButtonClicked += EndGame;
-        // subscribe to the OVRManager events so that we can run a function whenether the HMD is acquired or lost
-        OVRManager.HMDAcquired += DetectUsingOculus;
-        OVRManager.HMDLost += DetectUsingOculus;
+        if (Input.GetKeyDown(hideShowMenuKey))
+            ToggleMenu();
     }
+
     // unsubscribe when script is disabled
     void OnDisable()
     {
         MainMenu.OnStartButtonClicked -= StartGame;
-        MainMenu.OnRecenterButtonClicked -= RecenterOculus;
+        MainMenu.OnRecenterButtonClicked -= customOculusCam.GetComponentInChildren<CameraManager>().RecenterOculusPos;
         InGameMenu.OnExitButtonClicked -= EndGame;
-        OVRManager.HMDAcquired -= DetectUsingOculus;
-        OVRManager.HMDLost -= DetectUsingOculus;
+        
     }
 
 
-    void DetectUsingOculus()
-    {
-        // sets local usingOculus to whether there are HMDs detected
-        usingOculus = Ovr.Hmd.Detect() > 0;
-        // allow override for debugging
-        if (debugOculusOverride)
-            usingOculus = true;
-        // only activate OVRManager if you are using the oculus
-        ovrManager.SetActive(usingOculus);
-        // perform code to switch between oculus and pc player
-        if (player != null)
-        {
-            PlayerCamSwitch();
-        }
-    }
-
-    void PlayerCamSwitch()
-    {
-        if (usingOculus){
-            player.transform.FindChild("Camera").gameObject.SetActive(false);
-            currentMenu.transform.parent = player.transform;
-        }  
-        else{
-            player.transform.FindChild("OVRCameraRig").gameObject.SetActive(false);
-            currentMenu.transform.parent = player.transform.Find("Camera").transform;
-        }  
-    }
-
-    
+    //
+    // Support Methods
+    //
     void LoadStartScreen()
     {
-        player = Instantiate(startCamPrefab, startCamSpawn.position, startCamSpawn.rotation) as GameObject;
-        currentMenu = Instantiate(mainMenuPrefab, player.transform.position, player.transform.rotation) as GameObject;
-        PlayerCamSwitch(); // switch after player and menu are instantiated
-        railMover = Instantiate(railMoverPrefab, railMoverSpawn.position, railMoverSpawn.rotation) as GameObject;
-        railNodeGroup = Instantiate(railNodeGroupPrefab, Vector3.zero, Quaternion.identity) as GameObject;
-        railMover.GetComponent<RailMover>().railNodeGroup = railNodeGroup;
-        railMover.GetComponent<RailMover>().rider = player.transform;
+        startCam.SetActive(true);
+        customOculusCam.SetActive(true);
+        ParentAndMatchTransform(customOculusCam, startCam); // move cam before deactivating player -- otherwise oculus locks up
+        player.SetActive(false);
+        currentMenu = mainMenu;
+        ParentAndMatchTransform(currentMenu, startCam);
+        railMover.SetActive(true);
     }
 
     void StartGame()
     {
         //switch player to ground object
-        Destroy(player);    // destroys previous player object
-        player = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation) as GameObject;
-        currentMenu = Instantiate(inGameMenuPrefab, player.transform.position, player.transform.rotation) as GameObject;
-        PlayerCamSwitch(); // switch after player and menu are instantiated
+        player.SetActive(true);
+        ParentAndMatchTransform(customOculusCam, player);   // move cam before deactivating startCam -- otherwise oculus locks up
+        currentMenu = inGameMenu;
+        startCam.SetActive(false);
+        ParentAndMatchTransform(currentMenu, player);
         ShowMenu(false);
-        // destroy startmenu
-        Destroy(railMover);
-        Debug.Log("Game Started.");
+        railMover.SetActive(false);
     }
 
     void EndGame()
     {
-        if (player != null)
-            Destroy(player);
         LoadStartScreen();
     }
 
@@ -175,7 +167,13 @@ public class GameController : MonoBehaviour {
         Application.Quit();
     }
 
-    void HideShowMenu()
+    void ShowMenu(bool show)
+    {
+        showMenu = show;
+        currentMenu.SetActive(showMenu);
+    }
+
+    void ToggleMenu()
     {
         if (currentMenu != null)
         {
@@ -188,23 +186,13 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    void ShowMenu(bool show)
+    void ParentAndMatchTransform(GameObject obj1, GameObject obj2)
     {
-        showMenu = show;
-        currentMenu.SetActive(showMenu);
-    }
-
-    void RecenterOculus()
-    {
-        Debug.Log("Oculus Recentered.");
-        OVRManager.display.RecenterPose();
-    }
-
-
-    void Update()
-    {
-        if (Input.GetKeyDown(hideShowMenuKey))
-            HideShowMenu();
+        //obj1.transform.position = obj2.transform.position;
+        //obj1.transform.rotation = obj2.transform.rotation;
+        obj1.transform.parent = obj2.transform;
+        obj1.transform.localPosition = Vector3.zero;
+        obj1.transform.localRotation = Quaternion.identity;
     }
     
 }
